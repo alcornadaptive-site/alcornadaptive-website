@@ -157,8 +157,43 @@
     }
   }
 
+  // ----- Move Announcement Bar -----
+  // Two jobs:
+  //   1. Publish the bar's real rendered height to --banner-height, so the fixed
+  //      header sits below it even when the copy wraps to two or three lines.
+  //   2. Retire the bar on its own once the shop reopens, so a stale "we're
+  //      closed" notice can't outlive the move if nobody redeploys the site.
+  // After the reopening, delete the <aside> from the four HTML pages.
+  const REOPEN_DATE = new Date(2026, 8, 1); // month is 0-indexed: Sep 1, 2026, local time
+
+  function initAnnouncementBar() {
+    const bar = document.getElementById('announcementBar');
+    if (!bar) return;
+
+    const setHeight = function(px) {
+      document.documentElement.style.setProperty('--banner-height', px + 'px');
+    };
+
+    if (new Date() >= REOPEN_DATE) {
+      bar.remove();
+      setHeight(0);
+      return;
+    }
+
+    const syncHeight = function() {
+      setHeight(bar.offsetHeight);
+    };
+
+    syncHeight();
+    // Re-measure once webfonts settle and whenever the bar can rewrap.
+    window.addEventListener('load', syncHeight);
+    window.addEventListener('resize', syncHeight);
+    window.addEventListener('orientationchange', syncHeight);
+  }
+
   // ----- Initialize Everything -----
   function init() {
+    initAnnouncementBar();
     initMobileMenu();
     initHeaderScroll();
     initScrollAnimations();

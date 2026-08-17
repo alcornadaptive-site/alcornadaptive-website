@@ -33,6 +33,10 @@
   /* Layout */
   --container-max: 1200px;
   --header-height: 80px;
+  /* Height of the move-announcement bar. Fallback for no-JS; main.js measures
+     the real rendered height and overwrites this so wrapped text never overlaps
+     the header. Set to 0px when the bar is removed. */
+  --banner-height: 44px;
 
   /* Transitions */
   --transition-fast: 0.2s ease;
@@ -149,17 +153,119 @@ section {
   padding: var(--spacing-3xl) 0;
 }
 
+/* ----- Move Announcement Bar -----
+   Temporary notice for the Aug 22 closure / Sep 1 reopening.
+   main.js removes this automatically once the reopening date passes.
+   To retire it early: delete the <aside class="announcement-bar"> block from
+   index/about/services/training.html — the CSS below and --banner-height can stay. */
+.announcement-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1001; /* above .header (1000) */
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  border-bottom: 3px solid var(--color-accent);
+  color: var(--color-white);
+  font-family: var(--font-body);
+}
+
+.announcement-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs) var(--spacing-sm);
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0.6rem var(--spacing-md);
+  text-align: center;
+  font-size: 0.9375rem;
+  line-height: 1.35;
+}
+
+.announcement-dot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow: 0 0 0 0 rgba(232, 93, 4, 0.7);
+  animation: announcement-pulse 2.5s ease-out infinite;
+}
+
+@keyframes announcement-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(232, 93, 4, 0.7); }
+  70%  { box-shadow: 0 0 0 8px rgba(232, 93, 4, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(232, 93, 4, 0); }
+}
+
+.announcement-text {
+  /* Cancels the global `p { margin-bottom: 1rem }` — the sibling <a> is the last
+     child, so `p:last-child` never fires here and the stray margin would both
+     inflate the bar and knock the copy off centre. */
+  margin: 0;
+}
+
+.announcement-text strong {
+  font-weight: 700;
+}
+
+.announcement-text time {
+  color: #ffb066; /* lightened accent — keeps AA contrast on the navy bar */
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.announcement-link {
+  flex-shrink: 0;
+  color: var(--color-white);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  padding-bottom: 1px;
+  transition: border-color var(--transition-fast), color var(--transition-fast);
+  white-space: nowrap;
+}
+
+.announcement-link:hover,
+.announcement-link:focus-visible {
+  color: #ffb066;
+  border-bottom-color: #ffb066;
+}
+
+@media (max-width: 768px) {
+  .announcement-inner {
+    padding: 0.55rem var(--spacing-sm);
+    font-size: 0.8125rem;
+    gap: 0.35rem 0.5rem;
+  }
+
+  .announcement-dot {
+    display: none; /* reclaim width for the copy */
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .announcement-dot {
+    animation: none;
+  }
+}
+
 /* ----- Header ----- */
 .header {
   position: fixed;
-  top: 0;
+  top: var(--banner-height);
   left: 0;
   right: 0;
   height: var(--header-height);
   background: var(--color-white);
   box-shadow: var(--shadow-sm);
   z-index: 1000;
-  transition: all var(--transition-base);
+  /* Deliberately not `all`. --banner-height is re-measured by JS once webfonts
+     settle, and transitioning `top` made the header visibly slide down on every
+     page load. Only the scroll-shrink properties need to animate. */
+  transition: height var(--transition-base), box-shadow var(--transition-base);
 }
 
 .header.scrolled {
@@ -299,6 +405,9 @@ section {
 .hero {
   position: relative;
   min-height: 100vh;
+  /* Keeps the centred logo in the same optical position it held before the
+     announcement bar existed (border-box, so total height stays 100vh). */
+  padding-top: var(--banner-height);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -758,7 +867,7 @@ section {
 
 /* ----- Page Header ----- */
 .page-header {
-  padding-top: calc(var(--header-height) + var(--spacing-3xl));
+  padding-top: calc(var(--header-height) + var(--banner-height) + var(--spacing-3xl));
   padding-bottom: var(--spacing-2xl);
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
   color: var(--color-white);
@@ -1132,7 +1241,7 @@ section {
 
 /* ----- About Hero ----- */
 .about-hero {
-  padding-top: calc(var(--header-height) + var(--spacing-2xl));
+  padding-top: calc(var(--header-height) + var(--banner-height) + var(--spacing-2xl));
   padding-bottom: var(--spacing-3xl);
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
   position: relative;
@@ -1675,6 +1784,8 @@ blockquote cite {
 @media (max-width: 768px) {
   :root {
     --header-height: 70px;
+    /* Copy wraps to two lines at this width; main.js corrects the exact value. */
+    --banner-height: 64px;
   }
 
   section {
@@ -1684,7 +1795,7 @@ blockquote cite {
   /* Mobile Navigation */
   .nav {
     position: fixed;
-    top: var(--header-height);
+    top: calc(var(--header-height) + var(--banner-height));
     left: 0;
     right: 0;
     background: var(--color-white);
@@ -1693,7 +1804,11 @@ blockquote cite {
     transform: translateY(-100%);
     opacity: 0;
     visibility: hidden;
-    transition: all var(--transition-base);
+    /* Not `all`: the menu is visibility:hidden at rest, so a `top` transition
+       never ticks and would freeze at the pre-JS --banner-height, opening the
+       menu tucked under the header. Only animate the slide-in properties. */
+    transition: transform var(--transition-base), opacity var(--transition-base),
+                visibility var(--transition-base);
   }
 
   .nav.active {
