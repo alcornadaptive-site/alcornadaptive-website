@@ -32,14 +32,26 @@
   <!-- Move Announcement (temporary — auto-hides after 2026-09-01, see js/main.js) -->
   <aside class="announcement-bar" id="announcementBar" aria-label="Shop closure and relocation notice">
     <div class="announcement-inner">
-      <span class="announcement-dot" aria-hidden="true"></span>
+      <span class="announcement-badge" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/>
+          <circle cx="12" cy="10" r="3"/>
+        </svg>
+      </span>
       <p class="announcement-text">
-        <strong>We're moving!</strong> Closed from
-        <time datetime="2026-08-22">Saturday, August&nbsp;22</time>, reopening
-        <time datetime="2026-09-01">Tuesday, September&nbsp;1</time> at our new location.
+        <span class="announcement-title">We&rsquo;re moving</span>
+        <span class="announcement-rule" aria-hidden="true"></span>
+        <span class="announcement-dates">
+          Closed <time datetime="2026-08-22">Sat, Aug&nbsp;22</time>
+          <svg class="announcement-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          Reopens <time datetime="2026-09-01">Tue, Sep&nbsp;1</time>
+        </span>
       </p>
       <a class="announcement-link" href="https://www.instagram.com/alcornadaptive/" target="_blank" rel="noopener">
-        Follow for updates &rarr;
+        Follow for updates
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+        </svg>
       </a>
     </div>
   </aside>
