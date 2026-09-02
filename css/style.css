@@ -343,8 +343,8 @@ section {
 @media (max-width: 1040px) {
   /* The bar is fixed, so every pixel here is permanently off the viewport. */
   .announcement-inner {
-    padding: 0.4rem var(--spacing-sm);
-    gap: 0.25rem 0.75rem;
+    padding: 0.3rem var(--spacing-sm);
+    gap: 0.2rem 0.75rem;
   }
 
   .announcement-badge {
@@ -353,7 +353,7 @@ section {
 
   .announcement-text {
     flex-direction: column;
-    gap: 0.15rem;
+    gap: 0.1rem;
     width: 100%;
   }
 
@@ -364,31 +364,31 @@ section {
   }
 
   .announcement-flag {
-    font-size: 0.625rem;
-    letter-spacing: 0.14em;
+    font-size: 0.5625rem;
+    letter-spacing: 0.13em;
   }
 
   .announcement-title {
-    font-size: 1rem;
+    font-size: 0.9375rem;
   }
 
   /* Motif laid flat — literally .page-header-line at this width. */
   .announcement-rule {
-    width: 34px;
+    width: 28px;
     height: 2px;
   }
 
   .announcement-address {
-    font-size: 0.8125rem;
-  }
-
-  .announcement-note {
     font-size: 0.75rem;
   }
 
+  .announcement-note {
+    font-size: 0.6875rem;
+  }
+
   .announcement-link {
-    padding: 0.4rem 1rem;
-    font-size: 0.8125rem;
+    padding: 0.35rem 0.9rem;
+    font-size: 0.75rem;
   }
 }
 
@@ -407,11 +407,11 @@ section {
 
 @media (max-width: 480px) {
   .announcement-inner {
-    padding: 0.35rem var(--spacing-sm);
+    padding: 0.25rem var(--spacing-sm);
   }
 
   .announcement-note {
-    font-size: 0.6875rem;
+    font-size: 0.625rem;
   }
 }
 
@@ -420,7 +420,7 @@ section {
    the bar for the frame or two before main.js measures the real height. */
 @media (max-width: 1040px) {
   :root {
-    --banner-height: 136px; /* measured 134px at 1000px wide */
+    --banner-height: 122px; /* measured 120px at 1000px wide */
   }
 }
 
@@ -1964,8 +1964,8 @@ blockquote cite {
   :root {
     --header-height: 70px;
     /* The address takes a second line down here; main.js corrects the exact value.
-       Measured 148px at 390px wide. */
-    --banner-height: 150px;
+       Measured 133px at 390px wide. */
+    --banner-height: 134px;
   }
 
   section {

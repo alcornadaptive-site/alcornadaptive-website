@@ -161,14 +161,14 @@
   // Three jobs:
   //   1. Publish the bar's real rendered height to --banner-height, so the fixed
   //      header sits below it even when the copy wraps to two or three lines.
-  //   2. Slide it up out of the way 20s after load. It has said its piece by
+  //   2. Slide it up out of the way 15s after load. It has said its piece by
   //      then, and on a phone it's holding a chunk of the viewport hostage for
   //      as long as it stays. The address is in the footer of every page.
   //   3. Retire it entirely after a year, so a "new location" notice can't go on
   //      calling a year-old address new if nobody redeploys the site.
   // After it expires, delete the <aside> from the four HTML pages.
   const BANNER_EXPIRES = new Date(2027, 8, 2); // month is 0-indexed: Sep 2, 2027, local time
-  const BANNER_VISIBLE_MS = 20000;
+  const BANNER_VISIBLE_MS = 15000;
   const BANNER_EXIT_MS = 500; // keep in step with the transition in style.css
 
   function initAnnouncementBar() {
