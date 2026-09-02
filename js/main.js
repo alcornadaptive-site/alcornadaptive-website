@@ -158,20 +158,27 @@
   }
 
   // ----- New Location Announcement Bar -----
-  // Two jobs:
+  // Three jobs:
   //   1. Publish the bar's real rendered height to --banner-height, so the fixed
   //      header sits below it even when the copy wraps to two or three lines.
-  //   2. Retire the bar on its own after a year, so a "new location" notice can't
-  //      go on calling a year-old address new if nobody redeploys the site.
+  //   2. Slide it up out of the way 20s after load. It has said its piece by
+  //      then, and on a phone it's holding a chunk of the viewport hostage for
+  //      as long as it stays. The address is in the footer of every page.
+  //   3. Retire it entirely after a year, so a "new location" notice can't go on
+  //      calling a year-old address new if nobody redeploys the site.
   // After it expires, delete the <aside> from the four HTML pages.
   const BANNER_EXPIRES = new Date(2027, 8, 2); // month is 0-indexed: Sep 2, 2027, local time
+  const BANNER_VISIBLE_MS = 20000;
+  const BANNER_EXIT_MS = 500; // keep in step with the transition in style.css
 
   function initAnnouncementBar() {
     const bar = document.getElementById('announcementBar');
     if (!bar) return;
 
+    const root = document.documentElement;
+
     const setHeight = function(px) {
-      document.documentElement.style.setProperty('--banner-height', px + 'px');
+      root.style.setProperty('--banner-height', px + 'px');
     };
 
     if (new Date() >= BANNER_EXPIRES) {
@@ -180,7 +187,13 @@
       return;
     }
 
+    // Once the exit starts, the re-measure listeners below must stop fighting it:
+    // translateY doesn't change offsetHeight, so an orientationchange mid-slide
+    // would put --banner-height straight back and leave a gap above the header.
+    let leaving = false;
+
     const syncHeight = function() {
+      if (leaving) return;
       setHeight(bar.offsetHeight);
     };
 
@@ -189,6 +202,32 @@
     window.addEventListener('load', syncHeight);
     window.addEventListener('resize', syncHeight);
     window.addEventListener('orientationchange', syncHeight);
+
+    const retire = function() {
+      leaving = true;
+      // .banner-leaving is what licenses the header/hero to animate; see the
+      // comment on .header for why those transitions can't just be standing.
+      root.classList.add('banner-leaving');
+      bar.classList.add('announcement-bar--leaving');
+      setHeight(0); // header and hero reclaim the space on the same curve
+      window.setTimeout(function() {
+        bar.remove();
+        root.classList.remove('banner-leaving');
+      }, BANNER_EXIT_MS + 50);
+    };
+
+    const reduced = window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    window.setTimeout(function() {
+      if (reduced) {
+        leaving = true;
+        bar.remove();
+        setHeight(0);
+        return;
+      }
+      retire();
+    }, BANNER_VISIBLE_MS);
   }
 
   // ----- Initialize Everything -----
