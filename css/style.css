@@ -33,10 +33,10 @@
   /* Layout */
   --container-max: 1200px;
   --header-height: 80px;
-  /* Height of the move-announcement bar. Fallback for no-JS; main.js measures
+  /* Height of the new-location announcement bar. Fallback for no-JS; main.js measures
      the real rendered height and overwrites this so wrapped text never overlaps
      the header. Set to 0px when the bar is removed. */
-  --banner-height: 72px;
+  --banner-height: 78px;
 
   /* Transitions */
   --transition-fast: 0.2s ease;
@@ -153,9 +153,10 @@ section {
   padding: var(--spacing-3xl) 0;
 }
 
-/* ----- Move Announcement Bar -----
-   Temporary notice for the Aug 22 closure / Sep 1 reopening.
-   main.js removes this automatically once the reopening date passes.
+/* ----- New Location Announcement Bar -----
+   Temporary notice for the move to 370 W. San Rafael Dr.
+   main.js removes this automatically once BANNER_EXPIRES (2027-09-02) passes, so
+   a stale "new location" notice can't outlive its usefulness if nobody redeploys.
    To retire it early: delete the <aside class="announcement-bar"> block from
    index/about/services/training.html — the CSS below and --banner-height can stay. */
 .announcement-bar {
@@ -183,7 +184,7 @@ section {
   gap: 0.5rem 1.5rem;
   max-width: var(--container-max);
   margin: 0 auto;
-  padding: 0.85rem var(--spacing-md);
+  padding: 0.8rem var(--spacing-md);
 }
 
 .announcement-badge {
@@ -213,7 +214,26 @@ section {
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 0.4rem 0.9rem;
+  gap: 0.4rem 1.1rem;
+}
+
+/* Two stacked pairs either side of the rule — the claim, then the particulars.
+   Holds the bar to one compact row instead of three full-width lines. */
+.announcement-headline,
+.announcement-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+/* Small, letterspaced, accent: the status, read before the address. */
+.announcement-flag {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #ffb066;
+  white-space: nowrap;
 }
 
 /* The site's display voice, so the bar reads as part of the brand. */
@@ -229,51 +249,47 @@ section {
 .announcement-rule {
   flex-shrink: 0;
   width: 3px;
-  height: 26px;
+  height: 40px;
   background: var(--color-accent);
   border-radius: 2px;
 }
 
-.announcement-dates {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 0.4rem;
+/* Emphasis by weight, not by chrome — the address is the message. */
+.announcement-address {
   font-size: 0.9375rem;
-  color: rgba(255, 255, 255, 0.72);
-}
-
-/* Emphasis by weight, not by chrome — the two dates are the message. */
-.announcement-dates time {
-  color: var(--color-white);
   font-weight: 600;
-  white-space: nowrap;
+  line-height: 1.3;
+  color: var(--color-white);
 }
 
-.announcement-arrow {
-  flex-shrink: 0;
-  width: 15px;
-  height: 15px;
-  color: var(--color-accent);
+.announcement-note {
+  font-size: 0.8125rem;
+  line-height: 1.3;
+  color: rgba(255, 255, 255, 0.74);
+  /* On a 320px phone this sentence otherwise drops a lone "repair" onto line two.
+     No-op where unsupported, and no-op whenever it already fits on one line. */
+  text-wrap: balance;
 }
 
-/* Mirrors .btn-outline, the site's CTA treatment on dark grounds. */
+/* Solid accent, not the .btn-outline treatment the old bar used: the owner's ask
+   is "call and make an appointment", so the phone is the bar's primary action. */
 .announcement-link {
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.6rem 1.15rem;
-  border: 2px solid rgba(255, 255, 255, 0.32);
+  padding: 0.65rem 1.3rem;
+  border: 2px solid var(--color-accent);
   border-radius: var(--radius-md);
+  background: var(--color-accent);
   color: var(--color-white);
   text-decoration: none;
-  font-size: 0.875rem;
-  font-weight: 600;
+  font-size: 0.9375rem;
+  font-weight: 700;
   white-space: nowrap;
+  box-shadow: 0 2px 10px rgba(232, 93, 4, 0.35);
   transition: background var(--transition-fast), border-color var(--transition-fast),
-              transform var(--transition-fast);
+              transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .announcement-link svg {
@@ -283,18 +299,19 @@ section {
 
 .announcement-link:hover,
 .announcement-link:focus-visible {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.55);
+  background: #ff7a1f;
+  border-color: #ff7a1f;
+  box-shadow: 0 4px 16px rgba(232, 93, 4, 0.45);
   transform: translateY(-2px);
 }
 
-/* Wider than the site's 768px breakpoint on purpose: the single row runs out of
-   space around 890px, and stacking early beats an ugly two-row wrap. */
-@media (max-width: 900px) {
+/* Wider than the site's 768px breakpoint on purpose: with the address in the row
+   the single line runs out of space near 1040px, and stacking early beats a wrap. */
+@media (max-width: 1040px) {
   /* The bar is fixed, so every pixel here is permanently off the viewport. */
   .announcement-inner {
-    padding: 0.55rem var(--spacing-sm);
-    gap: 0.4rem 0.75rem;
+    padding: 0.5rem var(--spacing-sm);
+    gap: 0.3rem 0.75rem;
   }
 
   .announcement-badge {
@@ -303,8 +320,14 @@ section {
 
   .announcement-text {
     flex-direction: column;
-    gap: 0.3rem;
+    gap: 0.22rem;
     width: 100%;
+  }
+
+  .announcement-headline,
+  .announcement-detail {
+    align-items: center;
+    text-align: center;
   }
 
   .announcement-title {
@@ -317,13 +340,45 @@ section {
     height: 3px;
   }
 
-  .announcement-dates {
-    font-size: 0.8125rem;
+  .announcement-address {
+    font-size: 0.875rem;
   }
 
   .announcement-link {
-    padding: 0.45rem 1rem;
+    padding: 0.45rem 1.1rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Below this the address can't hold one line. Break it street / city rather than
+   letting it wrap mid-"Palm Springs," which is the one ugly wrap available. */
+@media (max-width: 600px) {
+  .announcement-street,
+  .announcement-city {
+    display: block;
+  }
+
+  .announcement-sep {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .announcement-address {
     font-size: 0.8125rem;
+  }
+
+  .announcement-note {
+    font-size: 0.75rem;
+  }
+}
+
+/* The bar stacks from 1040px but the site's own :root override doesn't kick in
+   until 768px, so cover the band between: without this the header rides up over
+   the bar for the frame or two before main.js measures the real height. */
+@media (max-width: 1040px) {
+  :root {
+    --banner-height: 140px;
   }
 }
 
@@ -1866,8 +1921,8 @@ blockquote cite {
 @media (max-width: 768px) {
   :root {
     --header-height: 70px;
-    /* Copy stacks over the button at this width; main.js corrects the exact value. */
-    --banner-height: 112px;
+    /* The address takes a second line down here; main.js corrects the exact value. */
+    --banner-height: 152px;
   }
 
   section {

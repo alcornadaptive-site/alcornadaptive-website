@@ -157,14 +157,14 @@
     }
   }
 
-  // ----- Move Announcement Bar -----
+  // ----- New Location Announcement Bar -----
   // Two jobs:
   //   1. Publish the bar's real rendered height to --banner-height, so the fixed
   //      header sits below it even when the copy wraps to two or three lines.
-  //   2. Retire the bar on its own once the shop reopens, so a stale "we're
-  //      closed" notice can't outlive the move if nobody redeploys the site.
-  // After the reopening, delete the <aside> from the four HTML pages.
-  const REOPEN_DATE = new Date(2026, 8, 1); // month is 0-indexed: Sep 1, 2026, local time
+  //   2. Retire the bar on its own after a year, so a "new location" notice can't
+  //      go on calling a year-old address new if nobody redeploys the site.
+  // After it expires, delete the <aside> from the four HTML pages.
+  const BANNER_EXPIRES = new Date(2027, 8, 2); // month is 0-indexed: Sep 2, 2027, local time
 
   function initAnnouncementBar() {
     const bar = document.getElementById('announcementBar');
@@ -174,7 +174,7 @@
       document.documentElement.style.setProperty('--banner-height', px + 'px');
     };
 
-    if (new Date() >= REOPEN_DATE) {
+    if (new Date() >= BANNER_EXPIRES) {
       bar.remove();
       setHeight(0);
       return;
